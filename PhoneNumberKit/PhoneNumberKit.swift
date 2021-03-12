@@ -346,16 +346,21 @@ extension PhoneNumberKit {
 #endif
 
 private extension Bundle {
-    /// Fixes a bug in SPM where the resource bundle may not be found if
-    /// https://bugs.swift.org/browse/SR-14337
+    /// Fixes a bug in SPM where the resource bundle may not be found if PhoneNumberKit is linked against a framework,
+    /// and that framework is under test. See https://bugs.swift.org/browse/SR-14337 for more details & repro case.
     static var resolvedModule: Bundle {
         guard
             let testBundle = Bundle.allBundles.first(where: { $0.bundlePath.hasSuffix("xctest") })
-        else { return .module }
+        else {
+            return .module
+        }
 
-        let fixedBundleURL = testBundle.bundleURL.appendingPathComponent("PhoneNumberKit_PhoneNumberKit.bundle")
-
-        guard let bundleForTests = Bundle(url: fixedBundleURL) else {
+        guard
+            let fixedBundleURL = testBundle
+                .urls(forResourcesWithExtension: "bundle", subdirectory: nil)?
+                .first(where: { $0.absoluteString.lowercased().contains("phonenumberkit") }),
+            let bundleForTests = Bundle(url: fixedBundleURL)
+        else {
             fatalError("failed to create bundle for tests")
         }
 
