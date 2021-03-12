@@ -322,7 +322,7 @@ public final class PhoneNumberKit: NSObject {
     ///
     /// - returns: an optional Data representation of the metadata.
     public static func defaultMetadataCallback() throws -> Data? {
-        let frameworkBundle = Bundle.module
+        let frameworkBundle = Bundle.resolvedModule
         guard let jsonPath = frameworkBundle.path(forResource: "PhoneNumberMetadata", ofType: "json") else {
             throw PhoneNumberError.metadataNotFound
         }
@@ -344,3 +344,21 @@ extension PhoneNumberKit {
     }
 }
 #endif
+
+private extension Bundle {
+    /// Fixes a bug in SPM where the resource bundle may not be found if
+    /// https://bugs.swift.org/browse/SR-14337
+    static var resolvedModule: Bundle {
+        guard
+            let testBundle = Bundle.allBundles.first(where: { $0.bundlePath.hasSuffix("xctest") })
+        else { return .module }
+
+        let fixedBundleURL = testBundle.bundleURL.appendingPathComponent("PhoneNumberKit_PhoneNumberKit.bundle")
+
+        guard let bundleForTests = Bundle(url: fixedBundleURL) else {
+            fatalError("failed to create bundle for tests")
+        }
+
+        return bundleForTests
+    }
+}
