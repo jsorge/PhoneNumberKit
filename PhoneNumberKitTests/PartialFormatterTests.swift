@@ -446,6 +446,22 @@ class PartialFormatterTests: XCTestCase {
         let formatted = partialFormatter.formatPartial("+420777123456")
         XCTAssertEqual(formatted, "777 123 456")
     }
+
+    func testWithPrefixDisabledAllowsNumberStratingFromSameDigitUS() {
+        let partialFormatter = PartialFormatter(phoneNumberKit: phoneNumberKit, defaultRegion: "US")
+        partialFormatter.withPrefix = false
+        partialFormatter.extractsPrefixIfNeeded = false
+        let formatted = partialFormatter.formatPartial("1202022022")
+        XCTAssertEqual(formatted, "(120) 202-2022")
+    }
+
+    func testWithPrefixDisabledAllowsNumberStratingFromSameDigitRU() {
+        let partialFormatter = PartialFormatter(phoneNumberKit: phoneNumberKit, defaultRegion: "RU")
+        partialFormatter.withPrefix = false
+        partialFormatter.extractsPrefixIfNeeded = false
+        let formatted = partialFormatter.formatPartial("8122345678")
+        XCTAssertEqual(formatted, "812 234-56-78")
+    }
     
     // MARK: region prediction
 
