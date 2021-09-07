@@ -455,6 +455,14 @@ class PartialFormatterTests: XCTestCase {
         XCTAssertEqual(formatted, "(120) 202-2022")
     }
 
+    func testWithPrefixDisabledAllowsNumberStratingFromSameDigitUA() {
+        let partialFormatter = PartialFormatter(phoneNumberKit: phoneNumberKit, defaultRegion: "UA")
+        partialFormatter.withPrefix = false
+        partialFormatter.extractsPrefixIfNeeded = false
+        let formatted = partialFormatter.formatPartial("0505050505")
+        XCTAssertEqual(formatted, "050 505 0505")
+    }
+
     func testWithPrefixDisabledAllowsNumberStratingFromSameDigitRU() {
         let partialFormatter = PartialFormatter(phoneNumberKit: phoneNumberKit, defaultRegion: "RU")
         partialFormatter.withPrefix = false
