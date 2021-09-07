@@ -55,6 +55,7 @@ public final class PartialFormatter {
     var prefixBeforeNationalNumber = String()
     var shouldAddSpaceAfterNationalPrefix = false
     var withPrefix = true
+    var extractsPrefixIfNeeded = true
 
     // MARK: Status
 
@@ -188,10 +189,14 @@ public final class PartialFormatter {
 
     // MARK: Formatting Extractions
 
+    private func shouldExtractPrefix(from number: String) -> Bool {
+        return extractsPrefixIfNeeded || withPrefix || number.starts(with: "+")
+    }
+
     func extractIDD(_ rawNumber: String) -> String {
         var processedNumber = rawNumber
         do {
-            if let internationalPrefix = currentMetadata?.internationalPrefix {
+            if shouldExtractPrefix(from: processedNumber), let internationalPrefix = currentMetadata?.internationalPrefix {
                 let prefixPattern = String(format: PhoneNumberPatterns.iddPattern, arguments: [internationalPrefix])
                 let matches = try regexManager?.matchedStringByRegex(prefixPattern, string: rawNumber)
                 if let m = matches?.first {
@@ -214,7 +219,7 @@ public final class PartialFormatter {
             self.prefixBeforeNationalNumber.append("1 ")
         } else {
             do {
-                if let nationalPrefix = currentMetadata?.nationalPrefixForParsing {
+                if shouldExtractPrefix(from: processedNumber), let nationalPrefix = currentMetadata?.nationalPrefixForParsing {
                     let nationalPrefixPattern = String(format: PhoneNumberPatterns.nationalPrefixParsingPattern, arguments: [nationalPrefix])
                     let matches = try regexManager?.matchedStringByRegex(nationalPrefixPattern, string: rawNumber)
                     if let m = matches?.first {
