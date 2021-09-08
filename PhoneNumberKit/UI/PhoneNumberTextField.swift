@@ -90,6 +90,15 @@ open class PhoneNumberTextField: UITextField, UITextFieldDelegate {
         }
     }
 
+    public var extractsPrefixIfNeeded: Bool {
+        get {
+            partialFormatter.extractsPrefixIfNeeded
+        }
+        set {
+            partialFormatter.extractsPrefixIfNeeded = newValue
+        }
+    }
+
     #if compiler(>=5.1)
     /// Available on iOS 13 and above just.
     public var countryCodePlaceholderColor: UIColor = {

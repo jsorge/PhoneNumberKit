@@ -85,6 +85,7 @@ You can customize your TextField UI in the following ways
 
 - `withFlag` will display the country code for the `currentRegion`. The `flagButton` is displayed in the `leftView` of the text field with it's size set based off your text size.
 - `withExamplePlaceholder` uses `attributedPlaceholder` to show an example number for the `currentRegion`. In addition when `withPrefix` is set, the country code's prefix will automatically be inserted and removed when editing changes.
+- When `withPrefix` is set to `false`, by default user will not be able to type in the first digit if it matches the prefix. This behaviour can be turned off by turning off the `extractsPrefixIfNeeded` flag.
 
 PhoneNumberTextField automatically formats phone numbers and gives the user full editing capabilities. If you want to customize you can use the PartialFormatter directly. The default region code is automatically computed but can be overridden if needed (see the example given below).
 
